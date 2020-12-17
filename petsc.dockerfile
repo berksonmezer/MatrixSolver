@@ -52,4 +52,4 @@ RUN python3 setup.py build && python3 setup.py install
 WORKDIR /app
 COPY ./MatrixSolver.py .
 
-
+#ENTRYPOINT ["python3", "MatrixSolver.py"]
