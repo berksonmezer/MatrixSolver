@@ -16,7 +16,7 @@ python3 MatrixSolver.py
 - Make sure that you enabled file sharing between the docker host and the images
 
 ```sh
-docker run -it -v ${pwd}:/app/customScript.py --cpus <CPU_COUNT> denizgokcin/petsc4py:latest /bin/bash
+docker run -it -v ${pwd}/customScript.py:/app/customScript.py --cpus <CPU_COUNT> denizgokcin/petsc4py:latest /bin/bash
 python3 customScript.py
 ```
 
