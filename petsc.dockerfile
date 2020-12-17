@@ -1,11 +1,10 @@
-# Docker file for a slim Ubuntu-based Python3 image
-
 FROM ubuntu:20.04
 
 ENV TZ=Europe/Istanbul
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
     && echo $TZ > /etc/timezone
 
+# Install the dependencies
 RUN apt-get update \
   && apt-get install -y \
     git \
@@ -23,11 +22,14 @@ RUN apt-get update \
 ENV SWDIR=/opt
 
 WORKDIR ${SWDIR}
+
+# Clone the petsc repository
 RUN git clone https://gitlab.com/petsc/petsc.git
 
+# Install python dependencies needed for petsc
 RUN pip3 install cython numpy
 
-# # # Configure and build PETSc
+# Configure and build PETSc
 WORKDIR ${SWDIR}/petsc
 RUN printf "\n=== Configuring PETSc without batch mode & installing\n"
 RUN ./configure --with-cc=gcc\
@@ -42,13 +44,16 @@ RUN ./configure --with-cc=gcc\
     make all && \
     make test
 
+# Install python dependencies needed for the MatrixSolver app
 RUN pip3 install mpi4py scipy
 
 ENV PETSC_DIR=${SWDIR}/petsc
 
+# Manually build and setup petsc4py
 WORKDIR ${SWDIR}/petsc/src/binding/petsc4py
 RUN python3 setup.py build && python3 setup.py install
 
+# Copy the python script
 WORKDIR /app
 COPY ./MatrixSolver.py .
 
